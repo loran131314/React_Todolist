@@ -11,6 +11,7 @@ function TodoList() {
   const [filteredTodos, setFilteredTodos] = useState([]);
   const [newTodo, setNewTodo] = useState('');
   const [unfinished, setUnfinished] = useState(0);
+  const [existTodo, setExistTodo] = useState('');
   const [tab, setTab] = useState('all');
   const nevigate = useNavigate();
 
@@ -122,6 +123,16 @@ function TodoList() {
       Swal.fire('Failed', error.response.data.message);
     }
   }
+  // /* ----- 編輯Todo ----- */
+  // const editTodo = async (id) => {
+  //   try {
+  //     const res = await axios.put(`${VITE_APP_HOST}/todos/${id}`, { content: existTodo },);
+  //     // console.log(res);    // TEST
+  //     getAllTodos();
+  //   } catch (error) {
+  //     Swal.fire('Failed', error.response.data.message);
+  //   }
+  // }
 
   /* ----- 刪除Todo ----- */
   const deleteTodo = async (id) => {
@@ -172,16 +183,16 @@ function TodoList() {
   /* ----- 清除已完成Todo ----- */
   const clearDoneTodo = () => {
     (async () => {
-      todos.filter((todoItem) => {
-        if (todoItem.status) {
-          Swal.fire({
-            title: 'Warning!!',
-            text:'Do you want to delete all the finished todo lists?',
-            showDenyButton: true,
-            confirmButtonText: 'Yes',
-            denyButtonText: 'No',
-          }).then((result) => {
-            if (result.isConfirmed) {
+      Swal.fire({
+        title: 'Warning!!',
+        text: 'Do you want to delete all the finished todo lists?',
+        showDenyButton: true,
+        confirmButtonText: 'Yes',
+        denyButtonText: 'No',
+      }).then((result) => {
+        if (result.isConfirmed) {
+          todos.filter((todoItem) => {
+            if (todoItem.status) {
               deleteTodo(todoItem.id);
             } else if (result.isDenied) {
               return;
@@ -267,15 +278,21 @@ function TodoList() {
                 {filteredTodos.map((todoItem) => {
                   return (
                     <li key={todoItem.id}>
-                      <label className="todoList_label">
+                      <label className="todoList_label" style={{ padding: '6px 0', }}>
                         <input className="todoList_input" type="checkbox" /*value="true"*/ checked={todoItem.status} onChange={() => { finishedTodo(todoItem.id) }} />
-                        <span>{todoItem.content}</span>
+                        <span value={existTodo}>{todoItem.content}</span>
                       </label>
+                      {/* <a href="#" onClick={(e) => {
+                        e.preventDefault();
+                        editTodo(todoItem.id);
+                      }}>
+                        <img style={{ width: '2em' }} src="/React_Todolist/write.png" alt="Delete" />
+                      </a> */}
                       <a href="#" onClick={(e) => {
                         e.preventDefault();
                         deleteTodo(todoItem.id);
                       }}>
-                        <img src="/React_Todolist/delete.jpg" alt="Delete" />
+                        <img style={{ width: '1.9em' }} src="/React_Todolist/delete.png" alt="Delete" />
                       </a>
                     </li>
                   )
